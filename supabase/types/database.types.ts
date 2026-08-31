@@ -876,7 +876,9 @@ export type Database = {
           endereco: string | null
           foto_url: string | null
           id: string
+          indicado_por_id: string | null
           nome: string
+          origem: string | null
           responsavel_financeiro_id: string | null
           telefone: string | null
         }
@@ -893,7 +895,9 @@ export type Database = {
           endereco?: string | null
           foto_url?: string | null
           id?: string
+          indicado_por_id?: string | null
           nome: string
+          origem?: string | null
           responsavel_financeiro_id?: string | null
           telefone?: string | null
         }
@@ -910,7 +914,9 @@ export type Database = {
           endereco?: string | null
           foto_url?: string | null
           id?: string
+          indicado_por_id?: string | null
           nome?: string
+          origem?: string | null
           responsavel_financeiro_id?: string | null
           telefone?: string | null
         }
@@ -920,6 +926,13 @@ export type Database = {
             columns: ["clinica_id"]
             isOneToOne: false
             referencedRelation: "clinica"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pessoa_indicado_por_id_fkey"
+            columns: ["indicado_por_id"]
+            isOneToOne: false
+            referencedRelation: "pessoa"
             referencedColumns: ["id"]
           },
           {
