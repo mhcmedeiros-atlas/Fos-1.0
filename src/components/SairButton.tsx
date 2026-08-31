@@ -16,7 +16,16 @@ export function SairButton() {
   return (
     <button
       onClick={sair}
-      className="rounded-[var(--radius-sm)] border border-[var(--linha)] px-3 py-1.5 text-sm text-[var(--tinta-suave)] transition hover:bg-[var(--superficie-afundada)]"
+      style={{
+        border: '1px solid var(--border-default)',
+        background: 'transparent',
+        borderRadius: 'var(--radius-sm)',
+        padding: '6px 12px',
+        fontSize: 13,
+        fontFamily: 'var(--font-sans)',
+        color: 'var(--text-secondary)',
+        cursor: 'pointer',
+      }}
     >
       Sair
     </button>

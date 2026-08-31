@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter, Fraunces, JetBrains_Mono } from 'next/font/google';
+import { Manrope, Fraunces, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+// As três famílias do design system Fós. Carregadas por next/font em vez do
+// @import do Google que vinha no token de tipografia: evita request bloqueante
+// e o flash de fonte na primeira renderização.
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces' });
-const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono-tabular' });
+const jetbrains = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains' });
 
 export const metadata: Metadata = {
   title: 'Fós',
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${fraunces.variable} ${mono.variable}`}>
+      <body className={`${manrope.variable} ${fraunces.variable} ${jetbrains.variable}`}>
         {children}
       </body>
     </html>

@@ -1,58 +1,44 @@
 @import "tailwindcss";
 
-/* Design system "Fós" — paleta aprovada. Não introduzir cor fora desta lista. */
-:root {
-  --porcelana: #faf8f5;
-  --superficie: #ffffff;
-  --tinta: #2a2826;
-  --tinta-suave: #6b6862;
-  --salvia: #6f8471;
-  --salvia-escuro: #57695a;
-  --salvia-10: #6f84711a;
-  --salvia-16: #6f847129;
-  --terracota: #a65c46;
-  --terracota-10: #a65c461a;
-  --terracota-16: #a65c4629;
-  --champagne: #c9a85c;
-  --champagne-escuro: #8a6e2e;
-  --champagne-10: #c9a85c1f;
-  --champagne-16: #c9a85c33;
-  --linha: #e6e2db;
-  --linha-forte: #d8d2c6;
-  --superficie-afundada: #f3f0ea;
-}
+/* Design system "Fós" — tokens importados VERBATIM do projeto do Claude Design
+   (handoff de 2026-08-31). Não editar valores aqui: se a paleta mudar, ela muda
+   no design system e os arquivos abaixo são substituídos inteiros.
+   A única alteração feita foi remover o @import de fontes do Google de
+   typography.css — as fontes são carregadas por next/font em layout.tsx, que
+   evita o flash de fonte e o request bloqueante. */
+@import "../styles/tokens/colors.css";
+@import "../styles/tokens/typography.css";
+@import "../styles/tokens/spacing.css";
+@import "../styles/tokens/effects.css";
 
+/* Ponte dos tokens para as utilidades do Tailwind (bg-superficie, text-tinta…). */
 @theme inline {
-  --color-porcelana: var(--porcelana);
-  --color-superficie: var(--superficie);
-  --color-tinta: var(--tinta);
-  --color-tinta-suave: var(--tinta-suave);
-  --color-salvia: var(--salvia);
-  --color-salvia-escuro: var(--salvia-escuro);
-  --color-terracota: var(--terracota);
-  --color-champagne: var(--champagne);
-  --color-champagne-escuro: var(--champagne-escuro);
-  --color-linha: var(--linha);
-  --color-linha-forte: var(--linha-forte);
-  --color-afundada: var(--superficie-afundada);
+  --color-porcelana: var(--surface-page);
+  --color-superficie: var(--surface-card);
+  --color-afundada: var(--surface-sunken);
+  --color-tinta: var(--text-primary);
+  --color-tinta-suave: var(--text-secondary);
+  --color-salvia: var(--color-primary);
+  --color-salvia-escuro: var(--color-primary-hover);
+  --color-terracota: var(--color-danger);
+  --color-champagne: var(--color-accent);
+  --color-linha: var(--border-default);
+  --color-linha-forte: var(--border-strong);
 
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-fraunces), Georgia, serif;
-  --font-mono: var(--font-mono-tabular), ui-monospace, monospace;
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-pill: 999px;
+  --font-sans: var(--font-manrope), 'Manrope', system-ui, sans-serif;
+  --font-display: var(--font-fraunces), 'Fraunces', Georgia, serif;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
 }
 
 body {
-  background: var(--porcelana);
-  color: var(--tinta);
+  background: var(--surface-page);
+  color: var(--text-primary);
   font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
-/* Números: sempre tabulares, para alinhar em coluna (valores, horários, saldo). */
+/* Números sempre tabulares: valores, horários, saldo de sessão. */
 .tabular {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;

@@ -1,0 +1,8 @@
+:root{
+--shadow-card:0 1px 2px #2A28260D, 0 6px 16px -6px #2A28261A;
+--shadow-card-hover:0 2px 4px #2A28260F, 0 12px 24px -8px #2A282624;
+--shadow-popover:0 4px 12px #2A28261A, 0 16px 40px -12px #2A28262E;
+--ease-standard:cubic-bezier(.4,0,.2,1); /* @kind other */
+--duration-fast:120ms; /* @kind other */
+--duration-base:180ms; /* @kind other */
+}
