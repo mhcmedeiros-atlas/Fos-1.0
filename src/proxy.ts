@@ -1,7 +1,10 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const ROTAS_PUBLICAS = ['/login', '/auth'];
+// Rotas alcançáveis sem sessão. `/redefinir-senha` NÃO entra aqui de propósito:
+// ela exige a sessão que o link do e-mail cria em /auth/confirmar, então quem
+// chega nela sem passar pelo link é mandado para o login.
+const ROTAS_PUBLICAS = ['/login', '/auth', '/recuperar-senha'];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });

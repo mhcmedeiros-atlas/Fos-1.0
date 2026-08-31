@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { AuthCard } from '@/components/ds/AuthCard';
+import { Campo, Aviso } from '@/components/ds/Campo';
+import { Button } from '@/components/ds/Button';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,6 +14,14 @@ export default function LoginPage() {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
+
+  // Lido depois da montagem (e não por useSearchParams) para manter a página
+  // estática e evitar exigir um limite de Suspense só por causa disto.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('erro') === 'link_invalido') {
+      setErro('Esse link expirou ou já foi usado. Peça um novo em "Esqueci minha senha".');
+    }
+  }, []);
 
   async function entrar(e: React.FormEvent) {
     e.preventDefault();
@@ -31,54 +43,50 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--tinta)]">
-            Fós
-          </h1>
-          <p className="mt-1 text-sm text-[var(--tinta-suave)]">
-            ERP para clínicas de estética avançada
-          </p>
+    <AuthCard>
+      <form onSubmit={entrar}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <Campo
+            label="E-mail"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            required
+            autoComplete="email"
+          />
+          <Campo
+            label="Senha"
+            type="password"
+            value={senha}
+            onChange={setSenha}
+            required
+            autoComplete="current-password"
+          />
         </div>
 
-        <form
-          onSubmit={entrar}
-          className="rounded-[var(--radius-lg)] border border-[var(--linha)] bg-[var(--superficie)] p-6"
-        >
-          <label className="block text-xs font-bold text-[var(--tinta)] mb-1.5">E-mail</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-[var(--radius-md)] border border-[var(--linha)] bg-[var(--porcelana)] px-3 py-2.5 text-sm outline-none focus:border-[var(--salvia)] focus:ring-2 focus:ring-[var(--salvia-16)]"
-          />
+        {erro && <Aviso tipo="erro">{erro}</Aviso>}
 
-          <label className="mt-4 block text-xs font-bold text-[var(--tinta)] mb-1.5">Senha</label>
-          <input
-            type="password"
-            required
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className="w-full rounded-[var(--radius-md)] border border-[var(--linha)] bg-[var(--porcelana)] px-3 py-2.5 text-sm outline-none focus:border-[var(--salvia)] focus:ring-2 focus:ring-[var(--salvia-16)]"
-          />
+        <div style={{ marginTop: 'var(--space-5)' }}>
+          <div style={{ display: 'block' }}>
+            <Button type="submit" variant="primary" disabled={carregando}>
+              {carregando ? 'Entrando…' : 'Entrar'}
+            </Button>
+          </div>
+        </div>
 
-          {erro && (
-            <div className="mt-4 flex items-start gap-2 rounded-[var(--radius-md)] bg-[var(--terracota-10)] px-3 py-2.5 text-sm text-[var(--terracota)]">
-              {erro}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={carregando}
-            className="mt-5 w-full rounded-[var(--radius-md)] bg-[var(--salvia)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--salvia-escuro)] disabled:opacity-60"
+        <div style={{ marginTop: 'var(--space-4)', textAlign: 'center' }}>
+          <Link
+            href="/recuperar-senha"
+            style={{
+              fontSize: 13,
+              color: 'var(--text-secondary)',
+              textDecoration: 'none',
+            }}
           >
-            {carregando ? 'Entrando…' : 'Entrar'}
-          </button>
-        </form>
-      </div>
-    </main>
+            Esqueci minha senha
+          </Link>
+        </div>
+      </form>
+    </AuthCard>
   );
 }
