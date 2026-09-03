@@ -1441,6 +1441,26 @@ export type Database = {
     }
     Functions: {
       anonimizar_paciente: { Args: { p_pessoa_id: string }; Returns: undefined }
+      criar_pacote: {
+        Args: {
+          p_condicao_parcelamento: string
+          p_itens: Json
+          p_nome: string
+          p_validade_dias: number
+          p_valor_total: number
+        }
+        Returns: string
+      }
+      registrar_contato_recebido: {
+        Args: {
+          p_canal: string
+          p_identificador_externo: string
+          p_nome: string | null
+          p_payload: Json
+          p_remetente: string
+        }
+        Returns: string
+      }
       vender_pacote: {
         Args: {
           p_forma_pagamento: string

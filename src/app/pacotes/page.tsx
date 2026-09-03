@@ -1,9 +1,10 @@
-import { Layers, CalendarClock } from 'lucide-react';
+import { Layers, CalendarClock, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { exigirSessao } from '@/lib/sessao';
 import { createClient } from '@/lib/supabase/server';
 import { AppShell } from '@/components/AppShell';
 import { BalanceRing } from '@/components/ds/BalanceRing';
+import { Button } from '@/components/ds/Button';
 import { Vazio } from '@/components/Widget';
 
 const dinheiro = (v: number) =>
@@ -87,9 +88,21 @@ export default async function PacotesPage() {
 
   return (
     <AppShell sessao={sessao}>
-      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, marginBottom: 'var(--space-4)' }}>
-        Pacotes
-      </h1>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 'var(--space-4)',
+        }}
+      >
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24 }}>Pacotes</h1>
+        <Link href="/pacotes/novo">
+          <Button variant="primary" icon={<Plus size={15} />}>
+            Novo pacote
+          </Button>
+        </Link>
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
         <Cartao titulo="Catálogo">
