@@ -8,12 +8,29 @@ export default async function FunilPage() {
   const supabase = await createClient();
 
   // Sem filtro de clinica_id: o RLS já restringe ao tenant da sessão.
+  //
+  // Duas consultas em vez de um embed: `lead` tem dois caminhos até `pessoa`
+  // (pessoa_id e possivel_duplicata_de), e o embed do PostgREST fica ambíguo.
   const { data: leads } = await supabase
     .from('lead')
-    .select('id, estagio, origem, proxima_acao, proxima_acao_em, pessoa:pessoa_id (id, nome, telefone)')
+    .select('id, estagio, origem, proxima_acao, proxima_acao_em, pessoa_id')
     .order('criado_em', { ascending: false });
 
-  const lista = (leads ?? []) as unknown as Lead[];
+  const idsPessoas = [...new Set((leads ?? []).map((l) => l.pessoa_id))];
+  const { data: pessoas } = idsPessoas.length
+    ? await supabase.from('pessoa').select('id, nome, telefone').in('id', idsPessoas)
+    : { data: [] };
+
+  const porPessoa = new Map((pessoas ?? []).map((p) => [p.id, p]));
+
+  const lista: Lead[] = (leads ?? []).map((l) => ({
+    id: l.id,
+    estagio: l.estagio,
+    origem: l.origem,
+    proxima_acao: l.proxima_acao,
+    proxima_acao_em: l.proxima_acao_em,
+    pessoa: porPessoa.get(l.pessoa_id) ?? null,
+  }));
   const porEstagio = new Map(ESTAGIOS.map((e) => [e.valor, [] as Lead[]]));
   for (const lead of lista) porEstagio.get(lead.estagio)?.push(lead);
 
