@@ -92,3 +92,44 @@ export async function concluirAtendimento(agendamentoId: string) {
   revalidatePath(`/atendimento/${agendamentoId}`);
   return { ok: true };
 }
+
+/**
+ * Procedimento feito na hora, sem agendamento próprio — a paciente veio para um
+ * e acabou fazendo outro.
+ *
+ * Toda a regra mora em `registrar_procedimento_extra`: cria o agendamento
+ * retroativo, o atendimento já concluído e, se for avulso, a venda. Aqui não
+ * repetimos nada disso, porque essa mesma situação vai chegar por outros
+ * caminhos (recepção lançando depois, importação) e a regra precisa ser uma só.
+ */
+export async function registrarProcedimentoExtra(
+  agendamentoOrigemId: string,
+  dados: {
+    procedimentoId: string;
+    tipo: 'sessao_avulsa' | 'retorno';
+    formaPagamento: string | null;
+    valor: number | null;
+    taxa: number;
+  },
+) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.rpc('registrar_procedimento_extra', {
+    p_agendamento_origem_id: agendamentoOrigemId,
+    p_procedimento_id: dados.procedimentoId,
+    p_tipo: dados.tipo,
+    p_forma_pagamento: dados.formaPagamento,
+    p_valor: dados.valor,
+    p_taxa: dados.taxa,
+    p_pacote_paciente_item_id: null,
+  });
+
+  // A mensagem do banco é informativa aqui — "profissional não habilitado" e
+  // conflito de agenda são exatamente o que a recepção precisa ler.
+  if (error) return { erro: error.message };
+
+  revalidatePath('/agenda');
+  revalidatePath('/');
+  revalidatePath(`/atendimento/${agendamentoOrigemId}`);
+  return { ok: true };
+}

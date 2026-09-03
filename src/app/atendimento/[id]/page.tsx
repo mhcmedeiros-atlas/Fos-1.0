@@ -6,6 +6,7 @@ import { AppShell } from '@/components/AppShell';
 import { Badge } from '@/components/ds/Badge';
 import { BalanceRing } from '@/components/ds/BalanceRing';
 import { BotaoIniciar, BotaoConcluir } from '@/components/atendimento/BotoesAtendimento';
+import { ProcedimentoExtra } from '@/components/atendimento/ProcedimentoExtra';
 import { minutosDoDia, rotuloHora } from '@/lib/agenda';
 
 function Cartao({ titulo, children }: { titulo?: string; children: React.ReactNode }) {
@@ -54,7 +55,7 @@ export default async function AtendimentoPage({
   const profissional = (ag.profissional as { pessoa: { nome: string } | null } | null)?.pessoa?.nome ?? '—';
   const sala = (ag.sala as { nome: string } | null)?.nome ?? null;
 
-  const [{ data: atendimento }, { data: alertas }, { data: saldo }] = await Promise.all([
+  const [{ data: atendimento }, { data: alertas }, { data: saldo }, { data: procedimentos }] = await Promise.all([
     supabase
       .from('atendimento')
       .select('id, status, iniciado_em, concluido_em')
@@ -76,6 +77,12 @@ export default async function AtendimentoPage({
           .eq('id', ag.pacote_paciente_item_id)
           .maybeSingle()
       : Promise.resolve({ data: null }),
+
+    supabase
+      .from('procedimento')
+      .select('id, nome, valor_tabela')
+      .eq('ativo', true)
+      .order('nome'),
   ]);
 
   const iniciado = atendimento !== null;
@@ -206,6 +213,21 @@ export default async function AtendimentoPage({
                 <BotaoIniciar agendamentoId={agendamentoId} />
               )}
             </Cartao>
+
+            {/* Só faz sentido depois de iniciar: o extra acontece durante a
+                visita, e o registro se ancora no atendimento em curso. */}
+            {iniciado && (
+              <Cartao titulo="Procedimento adicional">
+                <ProcedimentoExtra
+                  agendamentoId={agendamentoId}
+                  procedimentos={(procedimentos ?? []).map((p) => ({
+                    id: p.id,
+                    nome: p.nome,
+                    valor_tabela: Number(p.valor_tabela),
+                  }))}
+                />
+              </Cartao>
+            )}
           </div>
         </div>
       </div>

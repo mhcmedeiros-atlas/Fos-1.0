@@ -1451,6 +1451,18 @@ export type Database = {
         }
         Returns: string
       }
+      registrar_procedimento_extra: {
+        Args: {
+          p_agendamento_origem_id: string
+          p_forma_pagamento: string | null
+          p_pacote_paciente_item_id: string | null
+          p_procedimento_id: string
+          p_taxa: number
+          p_tipo: Database["public"]["Enums"]["tipo_atendimento"]
+          p_valor: number | null
+        }
+        Returns: string
+      }
       registrar_contato_recebido: {
         Args: {
           p_canal: string
