@@ -22,16 +22,20 @@ async function composio(
   argumentos: Record<string, any>,
   // deno-lint-ignore no-explicit-any
 ): Promise<any> {
+  // A conta conectada identifica a conexão de forma direta; o user_id fica como
+  // alternativa para quando houver várias contas por usuário.
+  const contaConectada = Deno.env.get('COMPOSIO_CONNECTED_ACCOUNT_ID');
+  const corpo: Record<string, unknown> = { arguments: argumentos };
+  if (contaConectada) corpo.connected_account_id = contaConectada;
+  else corpo.user_id = Deno.env.get('COMPOSIO_USER_ID');
+
   const resposta = await fetch(`${COMPOSIO_BASE}/api/v3/tools/execute/${ferramenta}`, {
     method: 'POST',
     headers: {
       'x-api-key': Deno.env.get('COMPOSIO_API_KEY')!,
       'content-type': 'application/json',
     },
-    body: JSON.stringify({
-      user_id: Deno.env.get('COMPOSIO_USER_ID'),
-      arguments: argumentos,
-    }),
+    body: JSON.stringify(corpo),
   });
 
   if (!resposta.ok) {
