@@ -25,11 +25,14 @@ function Metrica({
   rotulo,
   valor,
   destaque = false,
+  alerta = false,
   ajuda,
 }: {
   rotulo: string;
   valor: string;
   destaque?: boolean;
+  /** Atrasado só fica vermelho quando existe atraso — zero não é problema. */
+  alerta?: boolean;
   ajuda?: string;
 }) {
   return (
@@ -62,7 +65,11 @@ function Metrica({
           fontSize: destaque ? 22 : 18,
           fontWeight: 600,
           marginTop: 8,
-          color: destaque ? 'var(--sage-dark)' : 'var(--text-primary)',
+          color: alerta
+            ? 'var(--color-danger)'
+            : destaque
+            ? 'var(--sage-dark)'
+            : 'var(--text-primary)',
           whiteSpace: 'nowrap',
         }}
       >
@@ -114,6 +121,20 @@ export default async function FinanceiroPage({
       .lt('criado_em', fimMes)
       .order('criado_em', { ascending: false }),
   ]);
+
+  // Parcelas em aberto NÃO são filtradas pelo mês: "a receber" é uma posição,
+  // não um movimento do período. Filtrar por mês esconderia o atrasado antigo,
+  // que é exatamente o que a clínica precisa ver.
+  const { data: abertas } = await supabase
+    .from('parcela')
+    .select('id, venda_id, numero, valor, vencimento')
+    .is('recebimento_id', null)
+    .order('vencimento');
+
+  const hojeData = new Date(new Date().toDateString());
+  const aReceber = (abertas ?? []).reduce((s, p) => s + Number(p.valor), 0);
+  const atrasadas = (abertas ?? []).filter((p) => new Date(p.vencimento) < hojeData);
+  const totalAtrasado = atrasadas.reduce((s, p) => s + Number(p.valor), 0);
 
   const idsPacientes = [...new Set((vendas ?? []).map((v) => v.paciente_id))];
   const { data: pacientes } = idsPacientes.length
@@ -169,7 +190,22 @@ export default async function FinanceiroPage({
           valor={dinheiro(taxas)}
           ajuda={bruto > 0 ? `${((taxas / bruto) * 100).toFixed(1)}% do bruto` : undefined}
         />
-        <Metrica rotulo="Vendido no mês" valor={dinheiro(vendido)} ajuda="Inclui o que ainda não entrou" />
+        <Metrica rotulo="Vendido no mês" valor={dinheiro(vendido)} />
+        <Metrica
+          rotulo="A receber"
+          valor={dinheiro(aReceber)}
+          ajuda={`${(abertas ?? []).length} parcela${(abertas ?? []).length === 1 ? '' : 's'} em aberto`}
+        />
+        <Metrica
+          rotulo="Atrasado"
+          valor={dinheiro(totalAtrasado)}
+          alerta={totalAtrasado > 0}
+          ajuda={
+            atrasadas.length > 0
+              ? `${atrasadas.length} parcela${atrasadas.length === 1 ? '' : 's'} vencida${atrasadas.length === 1 ? '' : 's'}`
+              : 'Nada vencido'
+          }
+        />
       </div>
 
       <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'flex-start' }}>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ds/Badge';
 import { Button } from '@/components/ds/Button';
@@ -93,17 +94,26 @@ export function PainelDetalhe({
             paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border-default)',
           }}
         >
-          <Button
-            variant="primary"
-            size="sm"
-            disabled={!podeIniciar}
-            onClick={() => onIniciar(bloco)}
-          >
-            Iniciar atendimento
-          </Button>
-          {!podeIniciar && (
+          {podeIniciar && (
+            <Button variant="primary" size="sm" onClick={() => onIniciar(bloco)}>
+              Iniciar atendimento
+            </Button>
+          )}
+
+          {/* Já iniciado ou concluído não pode virar beco sem saída: antes o
+              botão só ficava desabilitado e não havia como abrir a tela. */}
+          {(bloco.status === 'em_atendimento' || bloco.status === 'realizado') && (
+            <Link href={`/atendimento/${bloco.id}`} style={{ textDecoration: 'none' }}>
+              <Button variant={bloco.status === 'em_atendimento' ? 'primary' : 'secondary'} size="sm">
+                {bloco.status === 'em_atendimento' ? 'Abrir atendimento' : 'Ver atendimento'}
+              </Button>
+            </Link>
+          )}
+
+          {['faltou', 'cancelado'].includes(bloco.status) && (
             <p style={{ fontSize: 11.5, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-              Este agendamento já foi {bloco.status === 'em_atendimento' ? 'iniciado' : 'encerrado'}.
+              Agendamento {bloco.status === 'faltou' ? 'marcado como falta' : 'cancelado'} — não há
+              atendimento a abrir.
             </p>
           )}
         </div>

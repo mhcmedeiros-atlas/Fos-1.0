@@ -1218,6 +1218,61 @@ export type Database = {
           },
         ]
       }
+      parcela: {
+        Row: {
+          clinica_id: string
+          id: string
+          numero: number
+          quitado_em: string | null
+          recebimento_id: string | null
+          valor: number
+          vencimento: string
+          venda_id: string
+        }
+        Insert: {
+          clinica_id: string
+          id?: string
+          numero: number
+          quitado_em?: string | null
+          recebimento_id?: string | null
+          valor: number
+          vencimento: string
+          venda_id: string
+        }
+        Update: {
+          clinica_id?: string
+          id?: string
+          numero?: number
+          quitado_em?: string | null
+          recebimento_id?: string | null
+          valor?: number
+          vencimento?: string
+          venda_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parcela_clinica_id_fkey"
+            columns: ["clinica_id"]
+            isOneToOne: false
+            referencedRelation: "clinica"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcela_venda_id_fkey"
+            columns: ["venda_id"]
+            isOneToOne: false
+            referencedRelation: "venda"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcela_recebimento_id_fkey"
+            columns: ["recebimento_id"]
+            isOneToOne: false
+            referencedRelation: "recebimento"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       termo_consentimento: {
         Row: {
           assinado_em: string
