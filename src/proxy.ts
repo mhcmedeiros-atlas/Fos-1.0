@@ -4,7 +4,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 // Rotas alcançáveis sem sessão. `/redefinir-senha` NÃO entra aqui de propósito:
 // ela exige a sessão que o link do e-mail cria em /auth/confirmar, então quem
 // chega nela sem passar pelo link é mandado para o login.
-const ROTAS_PUBLICAS = ['/login', '/auth', '/recuperar-senha'];
+// `/privacidade` precisa ser pública: a Meta exige que o rastreador dela
+// consiga abrir a política de privacidade para publicar o app.
+const ROTAS_PUBLICAS = ['/login', '/auth', '/recuperar-senha', '/privacidade'];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
