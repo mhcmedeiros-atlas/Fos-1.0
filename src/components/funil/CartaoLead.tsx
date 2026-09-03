@@ -3,11 +3,8 @@
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { AtSign, MessageCircle, Globe, CalendarClock, type LucideIcon } from 'lucide-react';
-import type { Database } from '@/../supabase/types/database.types';
 import { moverLead } from '@/app/funil/acoes';
-
-type Estagio = Database['public']['Enums']['estagio_funil'];
-type Origem = Database['public']['Enums']['origem_lead'];
+import { ESTAGIOS, type Estagio, type Origem, type Lead } from '@/lib/funil';
 
 // O lucide removeu os ícones de marca nas versões recentes; AtSign representa
 // o Instagram sem depender de logo de terceiro.
@@ -15,25 +12,6 @@ const ICONE_ORIGEM: Record<Origem, LucideIcon> = {
   whatsapp: MessageCircle,
   instagram: AtSign,
   formulario: Globe,
-};
-
-export const ESTAGIOS: { valor: Estagio; rotulo: string }[] = [
-  { valor: 'novo', rotulo: 'Novo' },
-  { valor: 'em_contato', rotulo: 'Em contato' },
-  { valor: 'avaliacao_agendada', rotulo: 'Avaliação agendada' },
-  { valor: 'avaliacao_realizada', rotulo: 'Avaliação realizada' },
-  { valor: 'orcamento_enviado', rotulo: 'Orçamento enviado' },
-  { valor: 'ganho', rotulo: 'Ganho' },
-  { valor: 'perdido', rotulo: 'Perdido' },
-];
-
-export type Lead = {
-  id: string;
-  estagio: Estagio;
-  origem: Origem;
-  proxima_acao: string | null;
-  proxima_acao_em: string | null;
-  pessoa: { id: string; nome: string; telefone: string | null } | null;
 };
 
 export function CartaoLead({ lead }: { lead: Lead }) {

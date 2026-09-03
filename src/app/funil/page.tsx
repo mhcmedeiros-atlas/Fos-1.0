@@ -1,7 +1,8 @@
 import { exigirSessao } from '@/lib/sessao';
 import { createClient } from '@/lib/supabase/server';
 import { AppShell } from '@/components/AppShell';
-import { CartaoLead, ESTAGIOS, type Lead } from '@/components/funil/CartaoLead';
+import { CartaoLead } from '@/components/funil/CartaoLead';
+import { ESTAGIOS, type Lead } from '@/lib/funil';
 
 export default async function FunilPage() {
   const sessao = await exigirSessao();
