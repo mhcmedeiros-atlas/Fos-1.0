@@ -35,7 +35,10 @@ function Metrica({
   return (
     <div
       style={{
-        flex: 1,
+        // minWidth 0 + basis permite encolher: sem isso o número em fonte mono
+        // impõe largura mínima e a linha estoura o container.
+        flex: '1 1 150px',
+        minWidth: 0,
         background: 'var(--surface-card)',
         border: '1px solid var(--border-default)',
         borderRadius: 'var(--radius-lg)',
@@ -56,10 +59,11 @@ function Metrica({
       <div
         style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: destaque ? 26 : 20,
+          fontSize: destaque ? 22 : 18,
           fontWeight: 600,
           marginTop: 8,
           color: destaque ? 'var(--sage-dark)' : 'var(--text-primary)',
+          whiteSpace: 'nowrap',
         }}
       >
         {valor}
@@ -150,7 +154,14 @@ export default async function FinanceiroPage({
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 'var(--space-4)', marginBottom: 'var(--space-5)' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 'var(--space-4)',
+          marginBottom: 'var(--space-5)',
+        }}
+      >
         <Metrica rotulo="Recebido líquido" valor={dinheiro(liquido)} destaque />
         <Metrica rotulo="Bruto" valor={dinheiro(bruto)} />
         <Metrica
